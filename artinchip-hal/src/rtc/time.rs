@@ -63,8 +63,8 @@ impl<'a> RealTime<'a> {
             self.reg.ctrl.modify(|v| v.disable_time_cnt());
 
             // Set value.
-            for i in 0..4 {
-                self.reg.time[i].modify(|v| v.set_time(((time >> (i * 8)) & 0xFF) as u8));
+            for (i, register) in self.reg.time.iter().enumerate() {
+                register.modify(|v| v.set_time(((time >> (i * 8)) & 0xFF) as u8));
             }
 
             // Init value.
@@ -95,8 +95,8 @@ impl<'a> RealTime<'a> {
             self.reg.ctrl.modify(|v| v.disable_alarm());
 
             // Set value.
-            for i in 0..4 {
-                self.reg.alarm[i].modify(|v| v.set_alarm(((alarm >> (i * 8)) & 0xFF) as u8));
+            for (i, register) in self.reg.alarm.iter().enumerate() {
+                register.modify(|v| v.set_alarm(((alarm >> (i * 8)) & 0xFF) as u8));
             }
 
             // Enable alarm and interrupt.
@@ -113,8 +113,8 @@ impl<'a> RealTime<'a> {
     /// Read alarm.
     pub fn alarm(&self) -> u32 {
         let mut alarm: u32 = 0;
-        for i in 0..4 {
-            alarm |= (self.reg.alarm[i].read().alarm() as u32) << (i * 8);
+        for (i, register) in self.reg.alarm.iter().enumerate() {
+            alarm |= (register.read().alarm() as u32) << (i * 8);
         }
         alarm
     }

@@ -81,7 +81,7 @@ fn build_pbp(bin: &[u8]) -> Result<Vec<u8>> {
 
     // 3. Calculate the current 32-bit sum (with placeholder checksum=0)
     let mut sum: u64 = 0;
-    for chunk in out.chunks_exact(4) {
+    for chunk in out.as_chunks::<4>().0 {
         let word = u32::from_le_bytes([chunk[0], chunk[1], chunk[2], chunk[3]]);
         sum = (sum + word as u64) & 0xffff_ffff;
     }
@@ -105,7 +105,7 @@ fn verify_checksum(buf: &[u8], target: u32) -> bool {
         return false;
     }
     let mut sum: u64 = 0;
-    for chunk in buf.chunks_exact(4) {
+    for chunk in buf.as_chunks::<4>().0 {
         let word = u32::from_le_bytes([chunk[0], chunk[1], chunk[2], chunk[3]]);
         sum = (sum + word as u64) & 0xffff_ffff;
     }
@@ -177,7 +177,7 @@ fn pack_pbp(pbp_data: &[u8]) -> Result<Vec<u8>> {
 
     // Calculate HEAD1 checksum
     let mut sum: u64 = 0;
-    for chunk in result.chunks_exact(4) {
+    for chunk in result.as_chunks::<4>().0 {
         let word = u32::from_le_bytes([chunk[0], chunk[1], chunk[2], chunk[3]]);
         sum = (sum + word as u64) & 0xffff_ffff;
     }
