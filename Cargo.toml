@@ -14,7 +14,19 @@ members = [
     "examples/pbp/pbp-dram",
     "examples/pbp/pbp-common",
     "examples/pbp/pbp-async-uart",
+    "examples/pbp/pbp-sdcard",
     "examples/app/app-bootloader",
+    "examples/app/app-sdcard",
     "examples/app/app-blinky",
 ]
 resolver = "3"
+
+# Size-first profile for first-stage PBP images. The D13x SPI-NOR BROM boots the
+# first-stage image only from the first 128 KiB partition, so PBP examples must
+# fit that budget; `pbp-release` trades code size for a little speed.
+[profile.pbp-release]
+inherits = "release"
+opt-level = "z"
+lto = "fat"
+codegen-units = 1
+panic = "abort"

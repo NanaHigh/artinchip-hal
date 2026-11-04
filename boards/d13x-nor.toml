@@ -98,3 +98,11 @@ filename = "app-blinky.aic"
 attr = "mtd;optional"
 load_address = 0x40700000
 features = ["d13x"]
+
+[apps.app-sdcard]
+name = "sdcard"
+partition = "app"
+filename = "app-sdcard.aic"
+attr = "mtd;optional"
+load_address = 0x40700000
+features = ["d13x"]

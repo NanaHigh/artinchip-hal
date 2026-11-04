@@ -306,6 +306,27 @@ uart_rx!(6, ('B', 11, 5), ('D', 23, 6), ('E', 7, 5), ('E', 9, 5), ('F', 5, 5));
 uart_tx!(7, ('B', 0, 5), ('D', 20, 5), ('E', 8, 5), ('F', 6, 5)); // UART7
 uart_rx!(7, ('B', 1, 5), ('D', 21, 5), ('E', 9, 5), ('F', 7, 5));
 
+// SDMC pin mux for D21x series.
+sdmc_cmd!(0, ('B', 0, 2)); // SDMC0
+sdmc_clk!(0, ('B', 1, 2));
+sdmc_dat3!(0, ('B', 2, 2));
+sdmc_dat0!(0, ('B', 3, 2));
+sdmc_dat1!(0, ('B', 4, 2));
+sdmc_dat2!(0, ('B', 5, 2));
+sdmc_dat4!(0, ('B', 6, 2));
+sdmc_dat5!(0, ('B', 7, 2));
+sdmc_dat6!(0, ('B', 8, 2));
+sdmc_dat7!(0, ('B', 9, 2));
+sdmc_ds!(0, ('B', 10, 2));
+sdmc_rst!(0, ('B', 11, 2));
+sdmc_dat1!(1, ('C', 0, 2)); // SDMC1
+sdmc_dat0!(1, ('C', 1, 2));
+sdmc_clk!(1, ('C', 2, 2));
+sdmc_cmd!(1, ('C', 3, 2));
+sdmc_dat3!(1, ('C', 4, 2));
+sdmc_dat2!(1, ('C', 5, 2));
+sdmc_det!(1, ('C', 6, 2));
+
 // I2C pin mux for D21x series.
 i2c_scl!(0, ('A', 0, 4), ('D', 6, 4), ('E', 0, 4)); // I2C0
 i2c_sda!(0, ('A', 1, 4), ('D', 7, 4), ('E', 1, 4));

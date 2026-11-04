@@ -34,6 +34,8 @@ jobs:
           - m6800
           - "d13x,interrupts,uart-logger"
           - "d21x,interrupts,uart-logger"
+          - "d13x,hadris"
+          - "d21x,hadris"
     steps:
       - uses: actions/checkout@v4
       - uses: actions-rust-lang/setup-rust-toolchain@v1
@@ -94,10 +96,10 @@ jobs:
             features: d12x
           - package: artinchip-hal
             target: riscv32imafc-unknown-none-elf
-            features: "d13x,interrupts,async-usb,uart-logger"
+            features: "d13x,interrupts,async-usb,uart-logger,hadris,hadris-async"
           - package: artinchip-hal
             target: riscv64gc-unknown-none-elf
-            features: "d21x,interrupts,async-usb,uart-logger"
+            features: "d21x,interrupts,async-usb,uart-logger,hadris,hadris-async"
           - package: artinchip-hal
             target: riscv32imafc-unknown-none-elf
             features: "g73x,interrupts,async-usb,uart-logger"
@@ -132,6 +134,28 @@ jobs:
           components: clippy
       - name: Run clippy
         run: cargo clippy -p aicfwc --all-targets --all-features -- -D warnings
+
+  clippy-host:
+    name: Clippy host targets
+    needs: fmt
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+        with:
+          toolchain: nightly
+          components: clippy
+      # The bare-metal targets cannot build the unit-test harness, so the test
+      # code is linted on the host with the full SDMC feature set. The
+      # `critical-section` dev-dependency provides the host waker implementation
+      # needed by the interrupt-driven driver.
+      - name: Run clippy on all host targets
+        run: |
+          cargo clippy -p artinchip-hal \
+            --no-default-features \
+            --features "d13x,interrupts,uart-logger,hadris,hadris-async" \
+            --all-targets \
+            -- -D warnings
 
   audit:
     name: Security Audit
@@ -253,10 +277,14 @@ jobs:
         run: |
           cargo build -p app-bootloader --target ${{ matrix.target }} --release --no-default-features --features ${{ matrix.features }}
           cargo build -p app-blinky --target ${{ matrix.target }} --release --no-default-features --features ${{ matrix.chip }}
+          cargo build -p app-sdcard --target ${{ matrix.target }} --release --no-default-features --features ${{ matrix.chip }}
       - name: Package images
         run: |
           cargo run -p aicfwc -- --board ${{ matrix.board }} --bootloader --build
           cargo run -p aicfwc -- --board ${{ matrix.board }} --app app-blinky --build
+      - name: Build app-sdcard sync variant
+        run: |
+          cargo build -p app-sdcard --target ${{ matrix.target }} --release --no-default-features --features ${{ matrix.chip }},sync-sd
 
   build-rv64-examples:
     name: Build RV64 examples
@@ -279,3 +307,26 @@ jobs:
           target: riscv64gc-unknown-none-elf
       - name: Build example
         run: cargo build -p ${{ matrix.EXAMPLES }} --target riscv64gc-unknown-none-elf --release --no-default-features --features d21x
+
+  build-pbp-sdcard:
+    name: Build pbp-sdcard
+    needs: fmt
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - target: riscv32imafc-unknown-none-elf
+            features: "d13x,async-sd"
+          - target: riscv32imafc-unknown-none-elf
+            features: "d13x,sync-sd"
+          - target: riscv64gc-unknown-none-elf
+            features: "d21x,sync-sd"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+        with:
+          toolchain: nightly
+          target: ${{ matrix.target }}
+      - name: Build pbp-sdcard (${{ matrix.features }})
+        run: cargo build -p pbp-sdcard --target ${{ matrix.target }} --release --no-default-features --features "${{ matrix.features }}"

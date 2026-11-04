@@ -105,7 +105,7 @@ pub struct RegisterBlock {
 pub struct BlockCount(u32);
 
 impl BlockCount {
-    const BLK_CNT: u32 = 0xFF;
+    const BLK_CNT: u32 = 0xFFFF;
 
     /// Set block count (`BLK_CNT`).
     #[doc(alias = "BLK_CNT")]
@@ -206,6 +206,12 @@ impl CommandConfig {
     const RESP_LEN: u32 = 0x1 << 7;
     const RESP_EXP: u32 = 0x1 << 6;
     const CMD_INDEX: u32 = 0x3F;
+
+    /// Create a command configuration with every field cleared.
+    #[inline]
+    pub const fn zeroed() -> Self {
+        Self(0)
+    }
 
     /// Set start send command bit (`START_CMD`).
     ///
@@ -730,6 +736,7 @@ impl HostCtrl1 {
     const ABORT_RDATA: u32 = 0x1 << 8;
     const SEND_IRQ_RESP: u32 = 0x1 << 7;
     const READ_WAIT: u32 = 0x1 << 6;
+    const DMA_EN: u32 = 0x1 << 5;
     const INT_EN: u32 = 0x1 << 4;
     const HW_RSTN: u32 = 0x1 << 3;
     const DMA_RESET: u32 = 0x1 << 2;
@@ -829,6 +836,25 @@ impl HostCtrl1 {
     #[inline]
     pub const fn read_wait(self) -> bool {
         (self.0 & Self::READ_WAIT) != 0
+    }
+    /// Enable the internal DMA data path (`DMA_EN`).
+    ///
+    /// Vendor source: `SDMC_HCTRL1_DMA_EN` (`BIT(5)`). The vendor HAL clears
+    /// this bit after a transfer to stop the internal DMA engine.
+    #[doc(alias = "DMA_EN")]
+    #[inline]
+    pub const fn enable_dma(self) -> Self {
+        Self(self.0 | Self::DMA_EN)
+    }
+    /// Disable the internal DMA data path.
+    #[inline]
+    pub const fn disable_dma(self) -> Self {
+        Self(self.0 & !Self::DMA_EN)
+    }
+    /// Check if the internal DMA data path is enabled.
+    #[inline]
+    pub const fn is_dma_enabled(self) -> bool {
+        (self.0 & Self::DMA_EN) != 0
     }
     /// Enable global interrupt (`INT_EN`).
     #[doc(alias = "INT_EN")]
@@ -1128,6 +1154,18 @@ impl IntEnable {
     const SDIO_INTEN: u32 = 0x1 << 16;
     const INT_EN: u32 = 0xFFFF;
 
+    /// Create an interrupt enable value with every source disabled.
+    #[inline]
+    pub const fn zeroed() -> Self {
+        Self(0)
+    }
+
+    /// Disable every controller interrupt source (`INT_EN`).
+    #[inline]
+    pub const fn disable_all(self) -> Self {
+        Self(self.0 & !Self::INT_EN)
+    }
+
     /// Enable sdio interrupt (`SDIO_INTEN`).
     #[doc(alias = "SDIO_INTEN")]
     #[inline]
@@ -1148,7 +1186,7 @@ impl IntEnable {
     #[doc(alias = "INT_EN")]
     #[inline]
     pub const fn enable_interrupt(self, interrupt: SdmcInterrupt) -> Self {
-        Self((self.0 & !Self::INT_EN) | (Self::INT_EN & (1 << (interrupt as u32))))
+        Self(self.0 | (1 << (interrupt as u32)))
     }
     /// Disable selected interrupt.
     #[inline]
@@ -1193,6 +1231,32 @@ pub struct OriginalIntStatus(u32);
 impl OriginalIntStatus {
     const SDIO_INT_STAT: u32 = 0x1 << 16;
     const INT_STAT: u32 = 0xFFFF;
+
+    /// Create a status value from raw register bits.
+    #[inline]
+    pub const fn from_bits(bits: u32) -> Self {
+        Self(bits)
+    }
+
+    /// Raw register value.
+    #[inline]
+    pub const fn raw(self) -> u32 {
+        self.0
+    }
+
+    /// Create a status value with every bit cleared.
+    #[inline]
+    pub const fn zeroed() -> Self {
+        Self(0)
+    }
+
+    /// Build a value that clears every defined interrupt when written.
+    ///
+    /// The original interrupt status register is write-one-to-clear.
+    #[inline]
+    pub const fn clear_all(self) -> Self {
+        Self(self.0 | Self::SDIO_INT_STAT | Self::INT_STAT)
+    }
 
     /// Check if sdio interrupt is pending (`SDIO_INT_STAT`).
     #[doc(alias = "SDIO_INT_STAT")]
@@ -1519,6 +1583,30 @@ impl IdmaStatus {
     const FBE_INT: u32 = 0x1 << 2;
     const RX_DONE_INT: u32 = 0x1 << 1;
     const TX_DONE_INT: u32 = 0x1;
+
+    /// Raw register value.
+    #[inline]
+    pub const fn raw(self) -> u32 {
+        self.0
+    }
+
+    /// Build a value that clears every interrupt status bit when written.
+    ///
+    /// The interrupt status bits of the internal DMA controller are
+    /// write-one-to-clear.
+    #[inline]
+    pub const fn clear_all(self) -> Self {
+        Self(
+            self.0
+                | Self::ABNORM_INT
+                | Self::NORM_INT
+                | Self::CARD_ERR_INT
+                | Self::DES_UNU_INT
+                | Self::FBE_INT
+                | Self::RX_DONE_INT
+                | Self::TX_DONE_INT,
+        )
+    }
 
     /// Get IDMA FSM state (`IDMA_FSM`).
     #[doc(alias = "IDMA_FSM")]

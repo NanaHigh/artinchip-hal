@@ -1,0 +1,29 @@
+[package]
+name = "pbp-sdcard"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+log = { version = "0.4", default-features = false }
+embedded-hal = "1.0.0"
+embassy-futures = { version = "0.1.2", optional = true }
+# The hadris 3.0 umbrella crate. `fat` adds `hadris::fat`, `async` selects the
+# poll-based embedded FAT API. The first-stage PBP must fit the 128 KiB SPI-NOR
+# boot partition, so this example does not pull `part` (the MBR is parsed with
+# one block read) and compiles only the async embedded FAT driver.
+hadris = { version = "=3.0.0-rc.2", default-features = false, features = ["fat"] }
+artinchip-hal = { version = "0.0.0", path = "../../../artinchip-hal" }
+artinchip-rt = { version = "0.0.0", path = "../../../artinchip-rt", default-features = false }
+
+[features]
+default = ["d13x", "async-sd"]
+async-sd = [
+    "hadris/async",
+    "artinchip-hal/hadris-async",
+    "artinchip-rt/interrupts",
+    "dep:embassy-futures",
+]
+sync-sd = ["hadris/sync", "artinchip-hal/hadris"]
+logger = ["artinchip-hal/uart-logger"]
+d13x = ["artinchip-rt/d13x", "artinchip-hal/d13x", "logger"]
+d21x = ["artinchip-rt/d21x", "artinchip-hal/d21x", "logger"]

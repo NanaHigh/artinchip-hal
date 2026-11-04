@@ -262,6 +262,255 @@ macro_rules! pwm_b {
     };
 }
 
+// SDMC pin multiplexer macros.
+
+/// Implements the `SerialClock` trait for multiple SDMC pins.
+#[allow(unused_macros)]
+macro_rules! sdmc_clk {
+    ($sdmc_num:expr, $(($port:literal, $pin:expr, $func:expr)),+) => {
+        $(
+            impl artinchip_hal::sdmc::SerialClock<$sdmc_num> for crate::gpio::Function<'_, $port, $pin, $func> {}
+
+            paste! {
+                impl<'a> crate::gpio::GpioPad<$port, $pin> {
+                    #[inline]
+                    pub fn [<into_sdmc $sdmc_num _clk>](self) -> crate::gpio::Function<'a, $port, $pin, $func> {
+                        self.into_function::<$func>()
+                    }
+                }
+            }
+        )+
+    };
+}
+
+/// Implements the `CommandPin` trait for multiple SDMC pins.
+#[allow(unused_macros)]
+macro_rules! sdmc_cmd {
+    ($sdmc_num:expr, $(($port:literal, $pin:expr, $func:expr)),+) => {
+        $(
+            impl artinchip_hal::sdmc::CommandPin<$sdmc_num> for crate::gpio::Function<'_, $port, $pin, $func> {}
+
+            paste! {
+                impl<'a> crate::gpio::GpioPad<$port, $pin> {
+                    #[inline]
+                    pub fn [<into_sdmc $sdmc_num _cmd>](self) -> crate::gpio::Function<'a, $port, $pin, $func> {
+                        self.into_function::<$func>()
+                    }
+                }
+            }
+        )+
+    };
+}
+
+/// Implements the `Data0` trait for multiple SDMC pins.
+#[allow(unused_macros)]
+macro_rules! sdmc_dat0 {
+    ($sdmc_num:expr, $(($port:literal, $pin:expr, $func:expr)),+) => {
+        $(
+            impl artinchip_hal::sdmc::Data0<$sdmc_num> for crate::gpio::Function<'_, $port, $pin, $func> {}
+
+            paste! {
+                impl<'a> crate::gpio::GpioPad<$port, $pin> {
+                    #[inline]
+                    pub fn [<into_sdmc $sdmc_num _dat0>](self) -> crate::gpio::Function<'a, $port, $pin, $func> {
+                        self.into_function::<$func>()
+                    }
+                }
+            }
+        )+
+    };
+}
+
+/// Implements the `Data1` trait for multiple SDMC pins.
+#[allow(unused_macros)]
+macro_rules! sdmc_dat1 {
+    ($sdmc_num:expr, $(($port:literal, $pin:expr, $func:expr)),+) => {
+        $(
+            impl artinchip_hal::sdmc::Data1<$sdmc_num> for crate::gpio::Function<'_, $port, $pin, $func> {}
+
+            paste! {
+                impl<'a> crate::gpio::GpioPad<$port, $pin> {
+                    #[inline]
+                    pub fn [<into_sdmc $sdmc_num _dat1>](self) -> crate::gpio::Function<'a, $port, $pin, $func> {
+                        self.into_function::<$func>()
+                    }
+                }
+            }
+        )+
+    };
+}
+
+/// Implements the `Data2` trait for multiple SDMC pins.
+#[allow(unused_macros)]
+macro_rules! sdmc_dat2 {
+    ($sdmc_num:expr, $(($port:literal, $pin:expr, $func:expr)),+) => {
+        $(
+            impl artinchip_hal::sdmc::Data2<$sdmc_num> for crate::gpio::Function<'_, $port, $pin, $func> {}
+
+            paste! {
+                impl<'a> crate::gpio::GpioPad<$port, $pin> {
+                    #[inline]
+                    pub fn [<into_sdmc $sdmc_num _dat2>](self) -> crate::gpio::Function<'a, $port, $pin, $func> {
+                        self.into_function::<$func>()
+                    }
+                }
+            }
+        )+
+    };
+}
+
+/// Implements the `Data3` trait for multiple SDMC pins.
+#[allow(unused_macros)]
+macro_rules! sdmc_dat3 {
+    ($sdmc_num:expr, $(($port:literal, $pin:expr, $func:expr)),+) => {
+        $(
+            impl artinchip_hal::sdmc::Data3<$sdmc_num> for crate::gpio::Function<'_, $port, $pin, $func> {}
+
+            paste! {
+                impl<'a> crate::gpio::GpioPad<$port, $pin> {
+                    #[inline]
+                    pub fn [<into_sdmc $sdmc_num _dat3>](self) -> crate::gpio::Function<'a, $port, $pin, $func> {
+                        self.into_function::<$func>()
+                    }
+                }
+            }
+        )+
+    };
+}
+
+/// Implements the `Data4` trait for multiple SDMC pins.
+#[allow(unused_macros)]
+macro_rules! sdmc_dat4 {
+    ($sdmc_num:expr, $(($port:literal, $pin:expr, $func:expr)),+) => {
+        $(
+            impl artinchip_hal::sdmc::Data4<$sdmc_num> for crate::gpio::Function<'_, $port, $pin, $func> {}
+
+            paste! {
+                impl<'a> crate::gpio::GpioPad<$port, $pin> {
+                    #[inline]
+                    pub fn [<into_sdmc $sdmc_num _dat4>](self) -> crate::gpio::Function<'a, $port, $pin, $func> {
+                        self.into_function::<$func>()
+                    }
+                }
+            }
+        )+
+    };
+}
+
+/// Implements the `Data5` trait for multiple SDMC pins.
+#[allow(unused_macros)]
+macro_rules! sdmc_dat5 {
+    ($sdmc_num:expr, $(($port:literal, $pin:expr, $func:expr)),+) => {
+        $(
+            impl artinchip_hal::sdmc::Data5<$sdmc_num> for crate::gpio::Function<'_, $port, $pin, $func> {}
+
+            paste! {
+                impl<'a> crate::gpio::GpioPad<$port, $pin> {
+                    #[inline]
+                    pub fn [<into_sdmc $sdmc_num _dat5>](self) -> crate::gpio::Function<'a, $port, $pin, $func> {
+                        self.into_function::<$func>()
+                    }
+                }
+            }
+        )+
+    };
+}
+
+/// Implements the `Data6` trait for multiple SDMC pins.
+#[allow(unused_macros)]
+macro_rules! sdmc_dat6 {
+    ($sdmc_num:expr, $(($port:literal, $pin:expr, $func:expr)),+) => {
+        $(
+            impl artinchip_hal::sdmc::Data6<$sdmc_num> for crate::gpio::Function<'_, $port, $pin, $func> {}
+
+            paste! {
+                impl<'a> crate::gpio::GpioPad<$port, $pin> {
+                    #[inline]
+                    pub fn [<into_sdmc $sdmc_num _dat6>](self) -> crate::gpio::Function<'a, $port, $pin, $func> {
+                        self.into_function::<$func>()
+                    }
+                }
+            }
+        )+
+    };
+}
+
+/// Implements the `Data7` trait for multiple SDMC pins.
+#[allow(unused_macros)]
+macro_rules! sdmc_dat7 {
+    ($sdmc_num:expr, $(($port:literal, $pin:expr, $func:expr)),+) => {
+        $(
+            impl artinchip_hal::sdmc::Data7<$sdmc_num> for crate::gpio::Function<'_, $port, $pin, $func> {}
+
+            paste! {
+                impl<'a> crate::gpio::GpioPad<$port, $pin> {
+                    #[inline]
+                    pub fn [<into_sdmc $sdmc_num _dat7>](self) -> crate::gpio::Function<'a, $port, $pin, $func> {
+                        self.into_function::<$func>()
+                    }
+                }
+            }
+        )+
+    };
+}
+
+/// Implements the `DataStrobe` trait for multiple SDMC pins.
+#[allow(unused_macros)]
+macro_rules! sdmc_ds {
+    ($sdmc_num:expr, $(($port:literal, $pin:expr, $func:expr)),+) => {
+        $(
+            impl artinchip_hal::sdmc::DataStrobe<$sdmc_num> for crate::gpio::Function<'_, $port, $pin, $func> {}
+
+            paste! {
+                impl<'a> crate::gpio::GpioPad<$port, $pin> {
+                    #[inline]
+                    pub fn [<into_sdmc $sdmc_num _ds>](self) -> crate::gpio::Function<'a, $port, $pin, $func> {
+                        self.into_function::<$func>()
+                    }
+                }
+            }
+        )+
+    };
+}
+
+/// Implements the `Reset` trait for multiple SDMC pins.
+#[allow(unused_macros)]
+macro_rules! sdmc_rst {
+    ($sdmc_num:expr, $(($port:literal, $pin:expr, $func:expr)),+) => {
+        $(
+            impl artinchip_hal::sdmc::ResetPin<$sdmc_num> for crate::gpio::Function<'_, $port, $pin, $func> {}
+
+            paste! {
+                impl<'a> crate::gpio::GpioPad<$port, $pin> {
+                    #[inline]
+                    pub fn [<into_sdmc $sdmc_num _rst>](self) -> crate::gpio::Function<'a, $port, $pin, $func> {
+                        self.into_function::<$func>()
+                    }
+                }
+            }
+        )+
+    };
+}
+
+/// Implements the `CardDetectPin` trait for multiple SDMC pins.
+#[allow(unused_macros)]
+macro_rules! sdmc_det {
+    ($sdmc_num:expr, $(($port:literal, $pin:expr, $func:expr)),+) => {
+        $(
+            impl artinchip_hal::sdmc::CardDetectPin<$sdmc_num> for crate::gpio::Function<'_, $port, $pin, $func> {}
+
+            paste! {
+                impl<'a> crate::gpio::GpioPad<$port, $pin> {
+                    #[inline]
+                    pub fn [<into_sdmc $sdmc_num _det>](self) -> crate::gpio::Function<'a, $port, $pin, $func> {
+                        self.into_function::<$func>()
+                    }
+                }
+            }
+        )+
+    };
+}
+
 // USB pin multiplexer macros.
 
 /// Implements the `UsbDm` trait for multiple USB data-minus pins.

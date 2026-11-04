@@ -276,6 +276,21 @@ qspi_mosi!(3, ('C', 10, 2), ('D', 2, 3));
 qspi_miso!(3, ('C', 11, 2), ('D', 3, 3));
 qspi_cs!(3, ('C', 9, 2), ('D', 1, 3));
 
+// SDMC pin mux for D13x series.
+sdmc_cmd!(0, ('B', 6, 2)); // SDMC0
+sdmc_clk!(0, ('B', 7, 2));
+sdmc_dat3!(0, ('B', 8, 2));
+sdmc_dat0!(0, ('B', 9, 2));
+sdmc_dat1!(0, ('B', 10, 2));
+sdmc_dat2!(0, ('B', 11, 2));
+sdmc_clk!(1, ('C', 2, 2)); // SDMC1
+sdmc_cmd!(1, ('C', 3, 2));
+sdmc_dat0!(1, ('C', 1, 2));
+sdmc_dat1!(1, ('C', 0, 2));
+sdmc_dat2!(1, ('C', 5, 2));
+sdmc_dat3!(1, ('C', 4, 2));
+sdmc_det!(1, ('C', 6, 2));
+
 // UART pin mux for D13x series.
 uart_tx!(0, ('A', 0, 5), ('C', 2, 7), ('D', 0, 5), ('U', 1, 4)); // UART0
 uart_rx!(0, ('A', 1, 5), ('C', 4, 7), ('D', 1, 5), ('U', 0, 4));

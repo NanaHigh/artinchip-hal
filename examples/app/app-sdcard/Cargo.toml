@@ -1,0 +1,27 @@
+[package]
+name = "app-sdcard"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+panic-halt = "1.0.0"
+artinchip-hal = { version = "0.0.0", path = "../../../artinchip-hal" }
+artinchip-rt = { version = "0.0.0", path = "../../../artinchip-rt" }
+embedded-hal = { version = "1.0.0", optional = true }
+# `fat` and the async block-device half are always linked; the blocking half is
+# pulled in by the `sync-sd` driver-path feature.
+hadris = { version = "=3.0.0-rc.2", default-features = false, features = ["fat", "async"] }
+log = { version = "0.4", default-features = false }
+
+[build-dependencies]
+aicfwc = { version = "0.0.0", path = "../../../aicfwc", default-features = false }
+
+[features]
+default = ["d13x"]
+logger = ["artinchip-hal/uart-logger"]
+# Select the blocking driver path. Without it the app builds the interrupt-driven
+# path. Both paths share `main.rs`/`common.rs` and differ only in
+# `async_sd.rs`/`sync_sd.rs`.
+sync-sd = ["hadris/sync", "dep:embedded-hal"]
+d13x = ["artinchip-rt/d13x", "artinchip-hal/d13x", "artinchip-hal/hadris-async", "logger"]
+d21x = ["artinchip-rt/d21x", "artinchip-hal/d21x", "artinchip-hal/hadris-async", "logger"]

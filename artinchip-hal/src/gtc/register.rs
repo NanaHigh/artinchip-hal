@@ -49,6 +49,17 @@ pub enum CntFreq {
     Freq250k,
 }
 
+impl CntFreq {
+    /// Counter frequency in Hz.
+    pub const fn hz(self) -> u32 {
+        match self {
+            Self::Freq4M => 4_000_000,
+            Self::Freq1M => 1_000_000,
+            Self::Freq250k => 250_000,
+        }
+    }
+}
+
 /// GTC counter control register.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
 #[repr(transparent)]

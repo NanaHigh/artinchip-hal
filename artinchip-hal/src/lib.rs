@@ -69,6 +69,7 @@ pub mod traits {
     pub use crate::pwm::PwmExt as _;
     pub use crate::qspi::QspiExt as _;
     pub use crate::rtc::RtcExt as _;
+    pub use crate::sdmc::SdmcExt as _;
     pub use crate::uart::UartExt as _;
     #[cfg(not(feature = "d12x"))]
     pub use crate::usbdrd::device::UsbDevExt as _;
